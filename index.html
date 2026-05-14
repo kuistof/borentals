@@ -36,7 +36,6 @@
             overflow-x: hidden;
         }
 
-        /* ─── MAIN ─── */
         main {
             flex: 1;
             display: flex;
@@ -51,7 +50,6 @@
             max-width: 800px;
         }
 
-        /* ─── COMING SOON PILL ─── */
         .pill {
             display: inline-block;
             font-size: 13px;
@@ -65,7 +63,6 @@
             margin-bottom: 56px;
         }
 
-        /* ─── HEADLINE ─── */
         h1 {
             font-size: clamp(48px, 8vw, 96px);
             font-weight: 900;
@@ -78,7 +75,6 @@
             color: var(--coral);
         }
 
-        /* ─── SUBTITLE ─── */
         .subtitle {
             font-size: 18px;
             font-weight: 400;
@@ -87,7 +83,6 @@
             margin-bottom: 40px;
         }
 
-        /* ─── FORM CONTAINER (fixed height to prevent layout shift) ─── */
         .form-container {
             position: relative;
             height: 80px;
@@ -108,7 +103,6 @@
             pointer-events: none;
         }
 
-        /* ─── EMAIL ROW ─── */
         .email-row {
             display: flex;
             border-radius: 6px;
@@ -119,7 +113,7 @@
             flex: 1;
             padding: 18px 22px;
             font-family: 'Outfit', sans-serif;
-            font-size: 16px; /* ≥16px prevents iOS zoom */
+            font-size: 16px;
             font-weight: 400;
             color: var(--white);
             background: #222222;
@@ -166,18 +160,16 @@
             cursor: not-allowed;
         }
 
-        /* ─── SUCCESS MESSAGE ─── */
         .success-msg {
             display: flex;
             align-items: center;
             justify-content: center;
             height: 56px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 500;
-            color: #6ecf8e;
+            color: rgba(255,255,255,0.8);
         }
 
-        /* ─── ERROR ─── */
         .error-msg {
             margin-top: 10px;
             font-size: 14px;
@@ -185,12 +177,11 @@
             min-height: 20px;
         }
 
-        /* ─── FOOTER ─── */
         footer {
             padding: 24px 40px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         .footer-copy {
@@ -199,23 +190,6 @@
             font-weight: 400;
         }
 
-        .footer-links {
-            display: flex;
-            gap: 28px;
-        }
-
-        .footer-links a {
-            font-size: 13px;
-            color: var(--gray);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: var(--white);
-        }
-
-        /* ─── MOBILE ─── */
         @media (max-width: 600px) {
             body {
                 overflow: hidden;
@@ -255,10 +229,7 @@
             }
 
             footer {
-                flex-direction: column;
-                gap: 12px;
                 padding: 20px;
-                text-align: center;
             }
         }
     </style>
@@ -275,7 +246,6 @@
             </p>
 
             <div class="form-container">
-                <!-- Input state -->
                 <div class="form-content" id="formInput">
                     <div class="email-row">
                         <input
@@ -294,9 +264,8 @@
                     <div class="error-msg" id="errorMsg"></div>
                 </div>
 
-                <!-- Success state (same position, no layout shift) -->
                 <div class="form-content hidden" id="formSuccess">
-                    <div class="success-msg">Du bist auf der Liste. Wir melden uns! ✓</div>
+                    <div class="success-msg">See you soon. 🤙</div>
                 </div>
             </div>
         </div>
@@ -304,34 +273,9 @@
 
     <footer>
         <span class="footer-copy">&copy; 2026 Rent Xperience GmbH</span>
-        <div class="footer-links">
-            <a href="#">Impressum</a>
-            <a href="#">Cookies</a>
-        </div>
     </footer>
 
     <script>
-        /*
-         *  GOOGLE APPS SCRIPT BACKEND
-         *  ──────────────────────────
-         *  1. Erstelle ein Google Sheet
-         *  2. Öffne script.google.com → neues Projekt
-         *  3. Füge diesen Code ein:
-         *
-         *     function doGet(e) {
-         *       var sheet = SpreadsheetApp.openById('DEINE_SHEET_ID').getActiveSheet();
-         *       var email = e.parameter.email;
-         *       sheet.appendRow([new Date(), email]);
-         *       return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
-         *     }
-         *
-         *  4. Die Sheet-ID ist der lange String zwischen /d/ und /edit in der Sheet-URL
-         *  5. Bereitstellen → Neue Bereitstellung → Web-App
-         *     → Zugriffsberechtigte: Jeder → Bereitstellen
-         *  6. Die URL mit /exec am Ende unten einfügen
-         */
-
-        // ✏️ DEINE APPS SCRIPT URL HIER EINFÜGEN:
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdHBaH2Ss0QlyI_x1Rvop_5lGKq5MJ-EQdEn4nFCpX4WiQK2wNRNoXm_cKZi-5VFtg/exec';
 
         function submitEmail() {
@@ -342,7 +286,6 @@
             var formSuccess = document.getElementById('formSuccess');
             var email = input.value.trim();
 
-            // Validate
             if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 errorMsg.textContent = 'Bitte gib eine gültige E-Mail-Adresse ein.';
                 return;
@@ -352,28 +295,24 @@
             btn.disabled = true;
             btn.textContent = '...';
 
-            // Submit via hidden iframe (CORS-safe with Apps Script)
             var iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             iframe.src = APPS_SCRIPT_URL + '?email=' + encodeURIComponent(email);
             document.body.appendChild(iframe);
 
-            // Show success after brief delay (iframe doesn't give us a callback)
             setTimeout(function() {
                 formInput.classList.add('hidden');
                 formSuccess.classList.remove('hidden');
                 input.value = '';
                 btn.disabled = false;
-                btn.textContent = 'Let's bo!';
+                btn.textContent = "Let's bo!";
 
-                // Clean up iframe
                 setTimeout(function() {
                     document.body.removeChild(iframe);
                 }, 5000);
             }, 1200);
         }
 
-        // Enter key support
         document.getElementById('emailInput').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
