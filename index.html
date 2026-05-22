@@ -358,80 +358,84 @@
 
     </footer>
 
-    <script>
+ <script>
 
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsx1xpIyXoOkg9jYA3gTWF4PzowURFhPmEFglTX1hDpmLWN1kY2j1e_Tp4bIPgqLsK/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsx1xpIyXoOkg9jYA3gTWF4PzowURFhPmEFglTX1hDpmLWN1kY2j1e_Tp4bIPgqLsK/exec';
 
-        async function submitEmail() {
+async function submitEmail() {
 
-            const input = document.getElementById('emailInput');
-            const btn = document.getElementById('submitBtn');
-            const errorMsg = document.getElementById('errorMsg');
-            const formInput = document.getElementById('formInput');
-            const formSuccess = document.getElementById('formSuccess');
-            const consent = document.getElementById('consentCheckbox');
-            const honeypot = document.getElementById('website');
+    const input = document.getElementById('emailInput');
+    const btn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const formInput = document.getElementById('formInput');
+    const formSuccess = document.getElementById('formSuccess');
+    const consent = document.getElementById('consentCheckbox');
+    const honeypot = document.getElementById('website');
 
-            const email = input.value.trim();
+    const email = input.value.trim();
 
-            if (honeypot.value !== '') {
-                return;
-            }
+    if (honeypot.value !== '') {
+        return;
+    }
 
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                errorMsg.textContent = 'Bitte gib eine gültige E-Mail-Adresse ein.';
-                return;
-            }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errorMsg.textContent = 'Bitte gib eine gültige E-Mail-Adresse ein.';
+        return;
+    }
 
-            if (!consent.checked) {
-                errorMsg.textContent = 'Bitte bestätige die Datenschutzhinweise.';
-                return;
-            }
+    if (!consent.checked) {
+        errorMsg.textContent = 'Bitte bestätige die Datenschutzhinweise.';
+        return;
+    }
 
-            errorMsg.textContent = '';
+    errorMsg.textContent = '';
 
-            btn.disabled = true;
-            btn.textContent = 'lädt...';
+    btn.disabled = true;
+    btn.textContent = 'lädt...';
 
-            try {
+    try {
 
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        email: email,
-                        consent: true,
-                        source: 'bo.rentals-coming-soon'
-                    })
-                });
-
-                formInput.classList.add('hidden');
-                formSuccess.classList.remove('hidden');
-
-                input.value = '';
-                consent.checked = false;
-
-            } catch (error) {
-
-                console.error(error);
-
-                errorMsg.textContent =
-                    'Etwas ist schiefgelaufen. Bitte versuche es erneut.';
-
-                btn.disabled = false;
-                btn.textContent = 'bin dabei!';
-            }
-        }
-
-        document.getElementById('emailInput').addEventListener('keydown', function(e) {
-
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                submitEmail();
-            }
-
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                email: email,
+                consent: true,
+                source: 'bo.rentals-coming-soon'
+            })
         });
 
-    </script>
+        const result = await response.text();
+
+        console.log(result);
+
+        formInput.classList.add('hidden');
+        formSuccess.classList.remove('hidden');
+
+        input.value = '';
+        consent.checked = false;
+
+    } catch (error) {
+
+        console.error(error);
+
+        errorMsg.textContent =
+            'Etwas ist schiefgelaufen. Bitte versuche es erneut.';
+
+        btn.disabled = false;
+        btn.textContent = 'bin dabei!';
+    }
+}
+
+document.getElementById('emailInput').addEventListener('keydown', function(e) {
+
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        submitEmail();
+    }
+
+});
+
+</script>
 
 </body>
 </html>
