@@ -175,11 +175,6 @@
             flex-shrink: 0;
         }
 
-        .consent-label a {
-            color: var(--white);
-            text-decoration: underline;
-        }
-
         .microcopy {
             margin-top: 10px;
             font-size: 12px;
@@ -221,11 +216,6 @@
             font-size: 13px;
             color: var(--gray);
             line-height: 1.7;
-        }
-
-        .footer-copy a {
-            color: var(--gray);
-            text-decoration: none;
         }
 
         @media (max-width: 600px) {
@@ -331,7 +321,6 @@
 
                             <span>
                                 Ich stimme zu, per E-Mail über den Launch sowie Marketing- und Angebotsaktionen von BO.RENTALS informiert zu werden.
-                                </a>.
                             </span>
 
                         </label>
@@ -360,11 +349,13 @@
 
     </main>
 
-  <footer>
-    <span class="footer-copy">
-        © 2026 Rent Xperience GmbH
-    </span>
-</footer>
+    <footer>
+
+        <span class="footer-copy">
+            © 2026 Rent Xperience GmbH
+        </span>
+
+    </footer>
 
     <script>
 
@@ -403,22 +394,14 @@
 
             try {
 
-                const response = await fetch(APPS_SCRIPT_URL, {
+                await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         email: email,
                         consent: true,
                         source: 'bo.rentals-coming-soon'
                     })
                 });
-
-                if (!response.ok) {
-                    throw new Error('Request failed');
-                }
 
                 formInput.classList.add('hidden');
                 formSuccess.classList.remove('hidden');
